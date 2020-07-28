@@ -1,0 +1,8 @@
+{{ template "base" .}}
+{{define "title"}}Update data{{end}}
+{{define "content"}}
+<form method="post" enctype="multipart/form-data">
+   <input type="file" name="data">
+   <input type="submit">
+</form>
+{{end}}
