@@ -127,6 +127,17 @@ func update(w http.ResponseWriter, r *http.Request){
 }
 
 func show(w http.ResponseWriter, r *http.Request){
+   templateFiles := []string {
+      "./templates/list.html",
+      "./templates/base.html",
+   }
+   ts, err := template.ParseFiles(templateFiles...)
+
+   if err != nil {
+      logError("Failed to parse template(s)"+fmt.Sprintf("%v",err))
+      httpISE(w)
+      return
+   }
 
    db, err := gorm.Open("sqlite3", "db.sqlite")
    if err != nil {
@@ -134,8 +145,8 @@ func show(w http.ResponseWriter, r *http.Request){
       httpISE(w)
    }
    defer db.Close()
-   tx := db.Begin()
-   variable := Variable{}
-   tx.First(&variable)
-   fmt.Fprintf(w,"Showing some stuff %v",variable.Name)
+   variables := make([]*Variable,0)
+   db.Find(&variables)
+   fmt.Printf("%v",variables)
+   ts.Execute(w,variables)
 }

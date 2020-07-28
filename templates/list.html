@@ -1,0 +1,8 @@
+{{ template "base" .}}
+
+{{define "title"}}List data{{end}}
+{{define "content"}}
+   {{ range .}}
+   <h1>{{ .Name }}</h1>
+   {{end}}
+{{end}}
