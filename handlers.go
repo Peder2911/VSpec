@@ -87,6 +87,10 @@ func update(w http.ResponseWriter, r *http.Request){
             logError("Failed to open DB")
             httpISE(w)
          }
+         db.Exec("DROP TABLE variables;")
+         db.Exec("DROP TABLE themes;")
+         db.Exec("DROP TABLE sets;")
+
          db.AutoMigrate(&Variable{},&Set{},&Theme{})
 
          tx := db.Begin()
@@ -100,7 +104,7 @@ func update(w http.ResponseWriter, r *http.Request){
                // Do not duplicate variables
                tx.FirstOrCreate(&varObj,Variable{Name:v})
             }
-            tx.FirstOrCreate(&setObj,Set{Name:setObj.Name})
+            tx.Create(&setObj)
          }
 
          // Create themes; collections of variable sets
@@ -111,7 +115,7 @@ func update(w http.ResponseWriter, r *http.Request){
                tx.FirstOrCreate(&setObj,Set{Name: set})
                themeObj.Sets[idx] = &setObj
             }
-            tx.FirstOrCreate(&themeObj,Theme{Name:themeObj.Name})
+            tx.Create(&themeObj)
          }
 
          tx.Commit()
